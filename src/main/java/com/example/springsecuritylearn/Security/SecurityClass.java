@@ -1,5 +1,7 @@
 package com.example.springsecuritylearn.Security;
 
+import javax.sql.DataSource;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -9,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 
 @Configuration
 public class SecurityClass {
@@ -18,7 +21,7 @@ public class SecurityClass {
         http
                 .authorizeHttpRequests(authorizeRequests -> {
                     authorizeRequests.requestMatchers("/login", "/register").permitAll();
-                    authorizeRequests.anyRequest().authenticated();
+                    authorizeRequests.anyRequest().hasRole("ADMIN");
                 });
 
         http.csrf((csrf) -> {
@@ -34,14 +37,19 @@ public class SecurityClass {
         return http.build();
     }
 
+    // @Bean
+    // UserDetailsService users() {
+    // UserDetails user = User.builder()
+    // .username("user")
+    // .password("{noop}password")
+    // .roles("USER")
+    // .build();
+    // return new InMemoryUserDetailsManager(user);
+    // }
+
     @Bean
-    UserDetailsService users() {
-        UserDetails user = User.builder()
-                .username("user")
-                .password("{noop}password")
-                .roles("USER")
-                .build();
-        return new InMemoryUserDetailsManager(user);
+    UserDetailsService userDetailsService(DataSource dataSource) {
+        return new JdbcUserDetailsManager(dataSource);
     }
 
 }
