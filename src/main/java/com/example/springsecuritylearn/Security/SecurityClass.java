@@ -34,6 +34,9 @@ public class SecurityClass {
 
         http.httpBasic((httpBasic) -> {
         });
+
+        http.cors((cors) -> {
+        });
         return http.build();
     }
 
@@ -50,6 +53,7 @@ public class SecurityClass {
     @Bean
     UserDetailsService userDetailsService(DataSource dataSource) {
         return new JdbcUserDetailsManager(dataSource);
+
     }
 
 }
